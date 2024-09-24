@@ -1,0 +1,14 @@
+add.um
+load-program.um
+multiply.um
+unmap.um
+conditional-move.um
+halt.um
+loadval.um
+nand.um
+segmented-loadstore.um
+division.um
+input.um
+map.um
+output.um
+segmented-loadstore2.um

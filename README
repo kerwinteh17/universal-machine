@@ -1,0 +1,149 @@
+Youssef Ezzo (yezzo01) & Kerwin Teh (kteh01)
+
+- Help Recieved:
+    We got help from TA office hours and general piazza q&a. Specifically, 
+    Isiah helped us find a major bug in our program and was very helpful.
+
+- Correct Implementation:
+    We think (and hope) that everything has been implemented correctly. 
+    Our implementation passes the given .um tests, midmark.um and sandmark.umz 
+    withno valgrind errors or leaked memory. It also seems to run the games 
+    correctly.
+    
+- Departures from design:
+    We cut down the modules we were using to 3: Memory, Instruction, and Main.
+    Instead of representing our memory of a Sequence of UArrays, we chose to
+    use a sequence of sequences.
+
+
+Overall Architecture:
+
+- Memory Module:
+    This module holds all functions which access or alter memory. These 
+    functions are used to build and update or machine's memory. Our memory is 
+    represented as a sequence of sequences (i.e a sequence of "segments").
+  
+- Instruction Module:
+    This module defines all the functions to peroform the 13 possible
+    instructions our machine needs to be able to do. This module calls 
+    functions from the memory module when necessary (when the instruction being
+    defined needs access to memory) and makes changes to registers in 
+    accordance with the instruction.
+
+- Main Module:
+    This module is responsible for running our machine. It handles opening a 
+    file, reading in the instructions into segment0 (by using the memory 
+    module), and then calling the appropriate instruction with the correct 
+    register based on the result of unpacking the "word".
+
+Overall, our memory Module does not have access to to any other module, and is
+the only module able to make changes or access memory (all other modules can
+only call functions from this module if they want to reach memory). Our
+instruction module can call functions from the memory module but cannot access
+the main module. This module is able to access and alter registers on its own.
+Finally, our main module can call functions from all othe modules and is
+responsible for running our virtual machine.
+
+– Explains how long it takes your UM to execute 50 million instructions, 
+  and how you know:
+    There is no real way to answer this question as it completely depends on 
+    the instructions being called. For example, midmark takes a few seconds to 
+    run on our machine and it has 30109 instructions whereas sandmark takes 
+    3 minutes to run while having only 11420 instructions. Instructions which
+    require memory access and memory changes will take longer than those which
+    only deal with registers. With that being said, if we assume a program
+    which will work like sandmark and average that out, our implementation
+    take roughly 218 hours.
+    
+– UM unit tests
+
+halt.um 
+- tests the halt command by only appending the halt command to the 
+  stream 
+
+output.um 
+- tests the output command by appending output commands to the stream. We 
+  outputted all the registers and made sure that nothing prints out, which 
+  means that all the registers are empty (0). Other unit tests use output, 
+  which further tests and confirms that the output command works.
+
+loadval.um
+- To test loadval, we use the previously tested output command. Everytime we 
+  load a value to a register, we output the value of that register immediately
+  to see if the registers were loaded correctly.
+
+add.um
+- We use previously tested commands to test the add command. First, we loaded
+  values into 2 registers, then we call add to those 2 registers and store the 
+  sum into another register. We then call output the register to make sure the
+  right ascii character is being outputted to stdout.
+
+input.um
+- We tested the input command by calling input then immediately appending 
+  output to the stream to make sure the right input is being placed in the 
+  correct register. 
+
+segmented-loadstore.um / segmented-loadstore2.um
+- For both of these tests, we tested segmented_load and segmented_store 
+  together by first appending segmented_store, then appending segmented_load 
+  in memory we just stored. Then, we appended output to make sure the both
+  these commands work cohesively and that the correct value is stored in the 
+  correct register according to our inputs.
+
+
+map.um
+- We called map commands 36 times to map many segments in memory. Since this
+  maps 36 segments, we have 37 segments, including the initial segment 0. 
+  Calling output on register[rB] (r2 in the test) will output the ascii
+  character corresponding to 37, which is '%'.
+
+unmap.um
+- We called map 74 times, then unmapped a segment at position 48. Then we 
+  mapped another segment and outputted the value at the register which 
+  corresponds to the index at which the segment is mapped. This makes sure that
+  whenever we unmap a segment and map it again, the segment is reused. If its 
+  reused, then the output of the index should be 48, which it is according 
+  to the output (the ascii character of 48 is '0'). Map is called again and its
+  output is ascii character of 76 ('L') because there shouldn't be any free 
+  segments. 
+
+multiply.um
+- We inputted values and outputted them to make sure they were going in the 
+  registers correctly. Then, multiplication is called on registers, and the 
+  product in the register is outputted, making sure that it is indeed the 
+  product. 
+
+division.um
+- This test was almost the same as the multiplcation test, but instead of 
+  calling multiply, we call division. We inputted values and called division,
+  storing the quetient into a specific register. Then we outputted the value
+  in that register to make sure that it is indeed the correct value based 
+  on our inputted values. 
+
+nand.um
+- For this test, we had to load big values that were 25 bits or less (because
+  loadval can only load a max of 25bit words). Then, we multiplied the values
+  and stored it in a specific register. We did this twice so we had the same
+  number in 2 separate registers. We then called nand on these 2 numbers, 
+  giving as a value of 1111111, which is 127 in decimal. Dividing this number
+  by 2, we outputted '?' which is the ascii character that corresponds to 63.
+
+conditional-move.um
+- We loaded some values into registers and performed calculations such as
+  addition and multiplication. Then, we called conditional move multiple times 
+  and outputted all the registers to make sure that they are correct based
+  on the conditional moves that we called. 
+
+load-program.um
+- We mapped a segment, loaded appropriate values, and called segmented_load
+  and store to make sure that we load instructions into the new segment. From 
+  there, we called load_program to duplicate segment 1. We then called 
+  segmented_load to get the value at segment 0 at a particular address. 
+  We outputted the value to make sure it was as its supposed to be. 
+  
+
+– Analysis time: 10 hours
+– Design time: 20 hours
+– Problem Solving time: 15 hours
+
+
